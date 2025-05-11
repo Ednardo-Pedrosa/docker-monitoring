@@ -15,3 +15,16 @@ scrape_configs:
   - job_name: 'loki'
     static_configs:
       - targets: ['loki:3100']
+
+# Descoberta de Nós do Kubernetes
+  - job_name: 'kubernetes-nodes'
+    kubernetes_sd_configs:
+    - role: node
+      api_server: 'https://127.0.0.1:33917'
+      tls_config:
+        ca_file: /path/to/ca.crt
+        insecure_skip_verify: true # Use apenas para testes em cluster local
+      bearer_token_file: /path/to/token
+    relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
